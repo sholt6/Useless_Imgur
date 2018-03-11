@@ -144,6 +144,7 @@ def __main__():
         try:
             content = get_content(url_list[i], (i+1))
         except IndexError as err:
+            print(err)
             print("Insufficient single-image posts on front page")
             print("This should never have happened")
             break
