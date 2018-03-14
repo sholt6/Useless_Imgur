@@ -12,7 +12,7 @@ import configparser
 def twitter_login():
     # Login and return api variable for future use
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read('/home/sjrh2/Python/Useless_Imgur/config.ini')
 
     consumer_key = config['Twitter Access']['consumer_key']
     consumer_secret = config['Twitter Access']['consumer_secret']
