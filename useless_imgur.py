@@ -122,6 +122,9 @@ def twitter_post(i, content, api):
     pic_post = api.media_upload(filename)
     api.update_status(status=message, media_ids = [pic_post.media_id_string])
 
+def purge_day():
+    #TODO: a method to remove all posts made today, for dev purposes
+
 
 def __main__():
     # Set Twitter login info
