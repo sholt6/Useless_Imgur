@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # A script which scrapes the top 5 imgur posts and posts them to Twitter
 
+import os
 import bs4
 import requests
 import tweepy as tp
@@ -60,6 +61,8 @@ def img_too_big(filename):
 
     if ((x < 4) | (y < 4) | (x > 8192) | (y > 8192)):
         return True
+    elif (os.stat(filename).st_size > 3145728):
+        return True
     else:
         return False
 
@@ -67,13 +70,14 @@ def get_content(url, i):
     # Get content of posts
     res = requests.get(url)
     soup = bs4.BeautifulSoup(res.text, 'lxml')
-    
+
     type_check = soup.find_all(attrs={'itemtype':
                                       'http://schema.org/ImageObject'})
 
     # If <1 post is gif, if >1 post is album
     if (len(type_check) != 1):
-        return False
+        type_err = "album/gif"
+        return False, type_err
 
     title = soup.select('.post-title')
     title = title[0].text
@@ -98,7 +102,7 @@ def get_content(url, i):
         file.write(source.content)
 
     if (img_too_big(filename)):
-        return False
+        return False, title
 
     return (title, url, filename)    
 
@@ -149,11 +153,12 @@ def __main__():
             print("This should never have happened")
             break
 
-        if (content):
+        if (content[0]):
             content_lists.append(content)
             i += 1
         else:
-            print("Unusable post encountered, skipping")
+            print(content[0])
+            print("Unusable post encountered: \"" + content[1] + "\"")
             url_list.pop(i)
 
     # Post images to Twitter with message
